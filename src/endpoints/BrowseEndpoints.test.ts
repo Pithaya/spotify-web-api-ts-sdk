@@ -16,7 +16,7 @@ describe("Integration: Browse Categories Endpoints", () => {
         const result = await sut.browse.getCategories();
 
         expect(fetchSpy.request(0).input).toBe(`https://api.spotify.com/v1/browse/categories`);
-        expect(result.categories.items.length).toBeGreaterThan(0);
+        expect(result?.categories.items.length).toBeGreaterThan(0);
     });
 
     it("getCategory can return information", async () => {
@@ -35,11 +35,11 @@ describe("Integration: Browse Categories Endpoints", () => {
         const result = await sut.browse.getPlaylistsForCategory(valid.id);
 
         expect(fetchSpy.lastRequest().input).toBe(`https://api.spotify.com/v1/browse/categories/${valid.id}/playlists`);
-        expect(result.playlists.items.length).toBeGreaterThan(0);
+        expect(result?.playlists.items.length).toBeGreaterThan(0);
     });
 
     it("getNewReleases returns some new releases", async () => {
         const result = await sut.browse.getNewReleases();
-        expect(result.albums.items.length).toBeGreaterThan(0);
+        expect(result?.albums.items.length).toBeGreaterThan(0);
     });
 });

@@ -1,17 +1,16 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { buildIntegrationTestUserSdkInstance } from "../test/SpotifyApiBuilder";
+import { buildIntegrationTestSdkInstance } from "../test/SpotifyApiBuilder";
 import EndpointsBase from "./EndpointsBase";
 import { FetchApiSpy } from "../test/FetchApiSpy";
 import { SpotifyApi } from "../SpotifyApi";
 
 describe("EndpointsBase", async () => {
-
     let api: SpotifyApi;
     let sut: FakeEndPoints;
     let fetchSpy: FetchApiSpy;
 
     beforeEach(() => {
-        [api, fetchSpy] = buildIntegrationTestUserSdkInstance();
+        [api, fetchSpy] = buildIntegrationTestSdkInstance();
         sut = new FakeEndPoints(api);
     });
 
@@ -51,16 +50,15 @@ describe("EndpointsBase", async () => {
     });
 });
 
-
 class FakeEndPoints extends EndpointsBase {
     public functionThatPassesUndefined() {
         return this.paramsFor({ id: undefined });
     }
-    
+
     public functionThatPassesNull() {
         return this.paramsFor({ id: null });
     }
-    
+
     public functionWithStringParam(id: string) {
         return this.paramsFor({ id });
     }

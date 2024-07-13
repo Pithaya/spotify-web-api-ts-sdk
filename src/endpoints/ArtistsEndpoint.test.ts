@@ -17,7 +17,7 @@ describe("Integration: Artists Endpoints", () => {
         const result = await sut.artists.get(valid.id);
 
         expect(fetchSpy.request(0).input).toBe(`https://api.spotify.com/v1/artists/${valid.id}`);
-        expect(result.name).toBe(valid.name);
+        expect(result?.name).toBe(valid.name);
     });
 
     it("getArtists can return multiple items", async () => {
@@ -35,15 +35,15 @@ describe("Integration: Artists Endpoints", () => {
         const result = await sut.artists.albums(valid.id);
 
         expect(fetchSpy.request(0).input).toBe(`https://api.spotify.com/v1/artists/${valid.id}/albums`);
-        expect(result.items.length).toBeGreaterThan(0);
+        expect(result?.items.length).toBeGreaterThan(0);
     });
 
     it("getArtistTopTracks can return information", async () => {
         const valid = validArtist();
-        const result = await sut.artists.topTracks(valid.id, "GB");
+        const result = await sut.artists.topTracks(valid.id);
 
         expect(fetchSpy.request(0).input).toBe(`https://api.spotify.com/v1/artists/${valid.id}/top-tracks?market=GB`);
-        expect(result.tracks.length).toBeGreaterThan(0);
+        expect(result?.tracks.length).toBeGreaterThan(0);
     });
 
     it("getArtistRelatedArtists can return information", async () => {
@@ -51,7 +51,6 @@ describe("Integration: Artists Endpoints", () => {
         const result = await sut.artists.relatedArtists(valid.id);
 
         expect(fetchSpy.request(0).input).toBe(`https://api.spotify.com/v1/artists/${valid.id}/related-artists`);
-        expect(result.artists.length).toBeGreaterThan(0);
+        expect(result?.artists.length).toBeGreaterThan(0);
     });
-
 });

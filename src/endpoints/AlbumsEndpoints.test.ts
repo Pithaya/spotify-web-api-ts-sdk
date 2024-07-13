@@ -18,7 +18,7 @@ describe("Integration: Albums Endpoints", () => {
         const result = await sut.albums.get(item.id);
 
         expect(fetchSpy.request(0).input).toBe(`https://api.spotify.com/v1/albums/${item.id}`);
-        expect(result.name).toBe(item.name);
+        expect(result?.name).toBe(item.name);
     });
 
     it("getAlbums can return multiple items at once", async () => {
@@ -35,6 +35,6 @@ describe("Integration: Albums Endpoints", () => {
         const item = validAlbumResult();
         const result = await sut.albums.tracks(item.id);
 
-        expect(result.items.length).toBe(validAlbumTracksResult().items.length);
+        expect(result?.items.length).toBe(validAlbumTracksResult().items.length);
     });
 });

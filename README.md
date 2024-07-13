@@ -1,6 +1,15 @@
 # Spotify Web API SDK - TypeScript
 
+> This fork is a trimmed down version of the SDK that directly uses access tokens.
+
 This is a JavaScript/TypeScript SDK for the [Spotify Web API](https://developer.spotify.com/web-api/).
+
+## Fork changes
+- Add validation for ids max length
+- Remove authentication logic to only accept an access token
+- Remove examples
+- Remove configuration files
+- Remove some unknown endpoint parameters
 
 ## Requirements
 

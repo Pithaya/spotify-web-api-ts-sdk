@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { buildIntegrationTestSdkInstance } from "../test/SpotifyApiBuilder";
-import { SpotifyApi } from "../SpotifyApi";
-import { FetchApiSpy } from "../test/FetchApiSpy";
+import type { SpotifyApi } from "../SpotifyApi";
+import type { FetchApiSpy } from "../test/FetchApiSpy";
 import { validUser } from "../test/data/validUser";
 
 describe("Integration: Users Endpoints", () => {
@@ -17,7 +17,7 @@ describe("Integration: Users Endpoints", () => {
         const result = await sut.users.profile(valid.id);
 
         expect(fetchSpy.request(0).input).toBe(`https://api.spotify.com/v1/users/${valid.id}`);
-        expect(result.id).toBe(valid.id);
-        expect(result.display_name).toBe(valid.display_name);
+        expect(result?.id).toBe(valid.id);
+        expect(result?.display_name).toBe(valid.display_name);
     });
 });

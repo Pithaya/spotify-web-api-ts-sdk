@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { buildIntegrationTestSdkInstance } from "../test/SpotifyApiBuilder";
-import { SpotifyApi } from "../SpotifyApi";
-import { FetchApiSpy } from "../test/FetchApiSpy";
+import type { SpotifyApi } from "../SpotifyApi";
+import type { FetchApiSpy } from "../test/FetchApiSpy";
 import { validGenres } from "../test/data/validGenres";
 
 describe("Integration: Episodes Endpoints", () => {
@@ -27,6 +27,6 @@ describe("Integration: Episodes Endpoints", () => {
             seed_tracks: ["0c6xIDDpzE81m2q797ordA"]
         });
 
-        expect(result.tracks.length).toBeGreaterThan(0);
-    })
+        expect(result?.tracks.length).toBeGreaterThan(0);
+    });
 });

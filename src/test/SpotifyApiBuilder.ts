@@ -1,64 +1,51 @@
 import { SpotifyApi } from "../SpotifyApi";
-import ClientCredentialsStrategy from "../auth/ClientCredentialsStrategy";
 import { FakeAuthStrategy } from "./FakeAuthStrategy";
 import { FetchApiMock } from "./FetchApiMock";
 import { FetchApiSpy } from "./FetchApiSpy";
-import AuthAsSpecifcUserForTests from "./AuthAsRealUserForTests";
-import InMemoryCachingStrategy from "../caching/InMemoryCachingStrategy";
-import { Scopes } from "../Scopes";
+import type { IAuthStrategy } from "../auth/IAuthStrategy";
 
 import dotenv from "dotenv";
-import { SdkOptions } from "../types";
+import type { SdkOptions } from "../types";
 dotenv.config();
 
-export function buildIntegrationTestSdkInstance(logResults: boolean = false): [SpotifyApi, FetchApiSpy] {
-    // This should be replaced with a representative server-side auth flow
-    // that returns a valid access token.
+class AccessTokenAuthStrategy implements IAuthStrategy {
+    private readonly accessToken: string;
 
-    // We'll load access keys from the .env file, so if it's not provided
+    constructor(accessToken: string) {
+        this.accessToken = accessToken;
+    }
+
+    public async getAccessToken(): Promise<string | null> {
+        return this.accessToken;
+    }
+}
+
+export function buildIntegrationTestSdkInstance(
+    logResults: boolean = false
+): [SpotifyApi, FetchApiSpy] {
+    // We'll load the access token from the .env file, so if it's not provided
     // all the integration tests will deliberately fail and not hit
     // the Spotify API
 
-    const clientId = process.env.INTEGRATION_TESTS_SPOTIFY_CLIENT_ID;
-    const clientSecret = process.env.INTEGRATION_TESTS_SPOTIFY_CLIENT_SECRET;
+    const token = process.env.INTEGRATION_TESTS_SPOTIFY_ACCESS_TOKEN;
 
-    if (!clientId || !clientSecret) {
-        throw new Error("No client ID or secret provided. Please provide a valid Spotify client ID and secret in the /.env file as: INTEGRATION_TESTS_SPOTIFY_CLIENT_ID and INTEGRATION_TESTS_SPOTIFY_CLIENT_SECRET");
+    if (!token) {
+        throw new Error(
+            "No token provided. Please provide a valid Spotify token in the /.env file as: INTEGRATION_TESTS_SPOTIFY_ACCESS_TOKEN"
+        );
     }
 
-    const authStrat = new ClientCredentialsStrategy(clientId, clientSecret);
+    const authStrat = new AccessTokenAuthStrategy(token);
 
     const fetchSpy = new FetchApiSpy(logResults);
     const sdkConfig = {
-        fetch: (input: RequestInfo | URL, init?: RequestInit | undefined) => {
-            return fetchSpy.fetch(input, init);
-        },
-        cachingStrategy: new InMemoryCachingStrategy()
-    }
-
-    const sdkInstance = new SpotifyApi(authStrat, sdkConfig);
-
-    return [sdkInstance, fetchSpy];
-}
-
-export function buildIntegrationTestUserSdkInstance(logResults: boolean = false): [SpotifyApi, FetchApiSpy] {
-    const clientId = process.env.INTEGRATION_TESTS_SPOTIFY_CLIENT_ID;
-    const email = process.env.INTEGRATION_TESTS_USER_EMAIL;
-    const password = process.env.INTEGRATION_TESTS_USER_PASSWORD;
-
-    if (!clientId || !email || !password) {
-        throw new Error("No client ID, or secret, or email, or password provided. Please provide a valid Spotify client ID and secret in the /.env file.");
-    }
-
-    const authStrat = new AuthAsSpecifcUserForTests(clientId, Scopes.all, email, password);
-
-    const fetchSpy = new FetchApiSpy(logResults);
-    const sdkConfig = {
-        fetch: (input: RequestInfo | URL, init?: RequestInit | undefined) => {
-            return fetchSpy.fetch(input, init);
-        },
-        cachingStrategy: new InMemoryCachingStrategy()
-    }
+        fetch: async (
+            input: RequestInfo | URL,
+            init?: RequestInit | undefined
+        ) => {
+            return await fetchSpy.fetch(input, init);
+        }
+    };
 
     const sdkInstance = new SpotifyApi(authStrat, sdkConfig);
 
@@ -69,10 +56,12 @@ export function buildUnitTestSdkInstance(): [SpotifyApi, FetchApiMock] {
     const authStrat = new FakeAuthStrategy();
     const fetchMock = new FetchApiMock();
     const sdkConfig: SdkOptions = {
-        fetch: (input: RequestInfo | URL, init?: RequestInit | undefined) => {
-            return fetchMock.fetch(input, init);
-        },
-        cachingStrategy: new InMemoryCachingStrategy()
+        fetch: async (
+            input: RequestInfo | URL,
+            init?: RequestInit | undefined
+        ) => {
+            return await fetchMock.fetch(input, init);
+        }
     };
 
     const sdkInstance = new SpotifyApi(authStrat, sdkConfig);

@@ -1,14 +1,14 @@
-import type { Genres, Track } from '../types.js';
-import EndpointsBase from './EndpointsBase.js';
+import type { Genres, Track } from "../types.js";
+import EndpointsBase from "./EndpointsBase.js";
 
 export default class RecommendationsEndpoints extends EndpointsBase {
-    public get(request: RecommendationsRequestRequiredArguments | RecommendationsRequest) {
+    public async get(request: RecommendationsRequestRequiredArguments | RecommendationsRequest) {
         const params = this.paramsFor(request);
-        return this.getRequest<RecommendationsResponse>(`recommendations${params}`);
+        return await this.getRequest<RecommendationsResponse>(`recommendations${params}`);
     }
 
-    public genreSeeds() {
-        return this.getRequest<Genres>('recommendations/available-genre-seeds');
+    public async genreSeeds() {
+        return await this.getRequest<Genres>("recommendations/available-genre-seeds");
     }
 }
 
