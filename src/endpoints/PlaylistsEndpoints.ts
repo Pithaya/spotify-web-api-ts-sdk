@@ -75,7 +75,7 @@ export default class PlaylistsEndpoints extends EndpointsBase {
     public async addItemsToPlaylist(playlist_id: string, uris?: string[], position?: number) {
         await this.postRequest(`playlists/${playlist_id}/tracks`, {
             position,
-            uris: uris
+            uris
         });
     }
 

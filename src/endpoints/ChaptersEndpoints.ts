@@ -11,7 +11,7 @@ export default class ChaptersEndpoints extends EndpointsBase {
     public async get(idOrIds: string | string[], market: ChapterMarket) {
         if (typeof idOrIds === "string") {
             const params = this.paramsFor({ market });
-            return this.getRequest<Chapter>(`chapters/${idOrIds}${params}`);
+            return await this.getRequest<Chapter>(`chapters/${idOrIds}${params}`);
         }
 
         validateLength("ids", idOrIds, 1, 50);

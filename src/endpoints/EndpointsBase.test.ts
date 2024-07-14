@@ -1,16 +1,14 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { buildIntegrationTestSdkInstance } from "../test/SpotifyApiBuilder";
 import EndpointsBase from "./EndpointsBase";
-import { FetchApiSpy } from "../test/FetchApiSpy";
-import { SpotifyApi } from "../SpotifyApi";
+import type { SpotifyApi } from "../SpotifyApi";
 
 describe("EndpointsBase", async () => {
     let api: SpotifyApi;
     let sut: FakeEndPoints;
-    let fetchSpy: FetchApiSpy;
 
     beforeEach(() => {
-        [api, fetchSpy] = buildIntegrationTestSdkInstance();
+        [api] = buildIntegrationTestSdkInstance();
         sut = new FakeEndPoints(api);
     });
 

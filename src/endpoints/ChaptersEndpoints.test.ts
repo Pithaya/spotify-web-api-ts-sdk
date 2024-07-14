@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { buildIntegrationTestSdkInstance } from "../test/SpotifyApiBuilder";
-import { SpotifyApi } from "../SpotifyApi";
-import { FetchApiSpy } from "../test/FetchApiSpy";
+import type { SpotifyApi } from "../SpotifyApi";
+import type { FetchApiSpy } from "../test/FetchApiSpy";
 import { validAudiobookChapterResponse } from "../test/data/validChapterApiResponse";
 
 describe("Integration: Chapters Endpoints", () => {

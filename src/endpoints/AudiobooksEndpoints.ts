@@ -7,7 +7,7 @@ export default class AudiobooksEndpoints extends EndpointsBase {
     public async get(idOrIds: string | string[], market?: Market) {
         if (typeof idOrIds === "string") {
             const params = this.paramsFor({ market });
-            return this.getRequest<Audiobook>(`audiobooks/${idOrIds}${params}`);
+            return await this.getRequest<Audiobook>(`audiobooks/${idOrIds}${params}`);
         }
 
         const params = this.paramsFor({ ids: idOrIds, market });
@@ -15,8 +15,8 @@ export default class AudiobooksEndpoints extends EndpointsBase {
         return response?.audiobooks ?? [];
     }
 
-    public getAudiobookChapters(id: string, market?: Market, limit?: MaxInt<50>, offset?: number) {
+    public async getAudiobookChapters(id: string, market?: Market, limit?: MaxInt<50>, offset?: number) {
         const params = this.paramsFor({ market, limit, offset });
-        return this.getRequest<Page<SimplifiedChapter>>(`audiobooks/${id}/chapters${params}`);
+        return await this.getRequest<Page<SimplifiedChapter>>(`audiobooks/${id}/chapters${params}`);
     }
 }

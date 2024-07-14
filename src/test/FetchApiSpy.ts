@@ -1,9 +1,9 @@
-import fs from 'fs';
+import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 
 export class FetchApiSpy {
-    private issuedRequests: Array<{ input: RequestInfo | URL; init?: RequestInit; }> = [];
-    private logResults: boolean;
+    private readonly issuedRequests: { input: RequestInfo | URL; init?: RequestInit }[] = [];
+    private readonly logResults: boolean;
 
     constructor(logResults: boolean = false) {
         this.logResults = logResults;
@@ -36,7 +36,7 @@ ${bodyText}`.trim();
             return awaited;
         }
 
-        return result;
+        return await result;
     }
 
     public request(offset: number) {

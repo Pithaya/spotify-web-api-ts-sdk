@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { buildIntegrationTestSdkInstance } from "../test/SpotifyApiBuilder";
 import { validAlbumTracksResult } from "../test/data/validAlbumTracksResult";
 import { validAlbumResult } from "../test/data/validAlbumResult";
-import { SpotifyApi } from "../SpotifyApi";
-import { FetchApiSpy } from "../test/FetchApiSpy";
+import type { SpotifyApi } from "../SpotifyApi";
+import type { FetchApiSpy } from "../test/FetchApiSpy";
 
 describe("Integration: Albums Endpoints", () => {
     let sut: SpotifyApi;

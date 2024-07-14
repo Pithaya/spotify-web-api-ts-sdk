@@ -2,7 +2,7 @@ import type { ItemTypes, Market, MaxInt, SearchResults } from "../types.js";
 import EndpointsBase from "./EndpointsBase.js";
 
 export default class SearchEndpoints extends EndpointsBase {
-    public async execute<const T extends readonly ItemTypes[]>(
+    public async execute<T extends readonly ItemTypes[]>(
         q: string,
         type: T,
         market?: Market,

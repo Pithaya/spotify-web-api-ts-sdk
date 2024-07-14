@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { SpotifyApi } from "./SpotifyApi";
+import type { SpotifyApi } from "./SpotifyApi";
 import { buildUnitTestSdkInstance } from "./test/SpotifyApiBuilder";
 import { FakeAuthStrategy } from "./test/FakeAuthStrategy";
-import { FetchApiMock } from "./test/FetchApiMock";
+import type { FetchApiMock } from "./test/FetchApiMock";
 import { validAlbumResult } from "./test/data/validAlbumResult";
 
 describe("SpotifyAPI Instance", () => {
@@ -18,11 +18,8 @@ describe("SpotifyAPI Instance", () => {
 
             await sut.albums.get("album-id-here");
 
-            const [headers, bodyString] =
-                fetchMock.issuedRequestHeadersAndBody(0);
-            expect((headers as any).Authorization).toBe(
-                `Bearer ${FakeAuthStrategy.FAKE_AUTH_TOKEN}`
-            );
+            const [headers] = fetchMock.issuedRequestHeadersAndBody(0);
+            expect((headers as any).Authorization).toBe(`Bearer ${FakeAuthStrategy.FAKE_AUTH_TOKEN}`);
         });
     });
 

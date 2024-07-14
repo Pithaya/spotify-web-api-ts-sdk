@@ -5,9 +5,9 @@ import EndpointsBase from "./EndpointsBase.js";
 export const MAX_GET_MULTIPLE_SHOWS_IDS = 50;
 
 export default class ShowsEndpoints extends EndpointsBase {
-    public get(id: string, market: Market): Promise<Show | null>;
-    public get(ids: string[], market: Market): Promise<Show[]>;
-    public async get(idOrIds: string | string[], market: Market) {
+    public get(id: string, market?: Market): Promise<Show | null>;
+    public get(ids: string[], market?: Market): Promise<Show[]>;
+    public async get(idOrIds: string | string[], market?: Market) {
         if (typeof idOrIds === "string") {
             const params = this.paramsFor({ market });
             return await this.getRequest<Show>(`shows/${idOrIds}${params}`);

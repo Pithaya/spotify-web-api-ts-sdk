@@ -1,9 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { buildIntegrationTestSdkInstance } from "../test/SpotifyApiBuilder";
 import { validAudioBook } from "../test/data/validAudioBook";
-import { SpotifyApi } from "../SpotifyApi";
-import { FetchApiSpy } from "../test/FetchApiSpy";
-import { validAudiobookChapters } from "../test/data/validAudiobookChapters";
+import type { SpotifyApi } from "../SpotifyApi";
+import type { FetchApiSpy } from "../test/FetchApiSpy";
 
 describe("Integration: Audiobooks Endpoints", () => {
     let sut: SpotifyApi;
@@ -33,7 +32,7 @@ describe("Integration: Audiobooks Endpoints", () => {
 
     it("getAudiobookChapters can return information", async () => {
         const item = validAudioBook();
-        const chapters = validAudiobookChapters();
+        // const chapters = validAudiobookChapters();
 
         const result = await sut.audiobooks.getAudiobookChapters(item.id);
 

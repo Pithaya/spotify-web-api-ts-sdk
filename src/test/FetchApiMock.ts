@@ -1,25 +1,25 @@
-export type FetchParams = { input: RequestInfo | URL; init?: RequestInit; };
+export type FetchParams = { input: RequestInfo | URL; init?: RequestInit };
 
 export class FetchApiMock {
-    public issuedRequests: Array<FetchParams> = [];
-    private responseQueue: Array<Response> = [];
+    public issuedRequests: FetchParams[] = [];
+    private readonly responseQueue: Response[] = [];
 
-    public fetch(input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
+    public async fetch(input: RequestInfo | URL, init?: RequestInit | undefined): Promise<Response> {
         this.issuedRequests.push({ input, init });
-        return Promise.resolve(this.responseQueue.pop()!);
+        return await Promise.resolve(this.responseQueue.pop()!);
     }
 
     public queueResponse(response: Response) {
         this.responseQueue.push(response);
     }
 
-    public queueResponseBody(status: number, body: any) {        
+    public queueResponseBody(status: number, body: any) {
         this.queueRawResponseBody(status, JSON.stringify(body));
     }
 
     public queueRawResponseBody(status: number, body: string) {
         const fakeResponse = {
-            status: status,
+            status,
             text: () => {
                 return JSON.stringify(body);
             }
@@ -40,5 +40,3 @@ export class FetchApiMock {
         return [headers, body];
     }
 }
-
-
