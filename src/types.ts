@@ -1,18 +1,11 @@
 // Configuration types
 
-export type RequestImplementation = (
-    input: RequestInfo | URL,
-    init?: RequestInit | undefined
-) => Promise<Response>;
+export type RequestImplementation = (input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>;
 
 export type SdkOptions = {
     fetch?: RequestImplementation;
     beforeRequest?: (url: string, options: RequestInit) => void;
-    afterRequest?: (
-        url: string,
-        options: RequestInit,
-        response: Response
-    ) => void;
+    afterRequest?: (url: string, options: RequestInit, response: Response) => void;
     deserializer?: IResponseDeserializer;
     responseValidator?: IValidateResponses;
     errorHandler?: IHandleErrors;
@@ -21,11 +14,7 @@ export type SdkOptions = {
 export type SdkConfiguration = SdkOptions & {
     fetch: RequestImplementation;
     beforeRequest: (url: string, options: RequestInit) => void;
-    afterRequest: (
-        url: string,
-        options: RequestInit,
-        response: Response
-    ) => void;
+    afterRequest: (url: string, options: RequestInit, response: Response) => void;
     deserializer: IResponseDeserializer;
     responseValidator: IValidateResponses;
     errorHandler: IHandleErrors;
@@ -45,22 +34,12 @@ export interface IResponseDeserializer {
 
 // API return types
 
-export type MaxInt<T extends number> = number extends T
-    ? number
-    : _Range<T, []>;
-export type _Range<
-    T extends number,
-    R extends unknown[]
-> = R["length"] extends T ? R[number] | T : _Range<T, [R["length"], ...R]>;
+export type MaxInt<T extends number> = number extends T ? number : _Range<T, []>;
+export type _Range<T extends number, R extends unknown[]> = R["length"] extends T
+    ? R[number] | T
+    : _Range<T, [R["length"], ...R]>;
 
-export type ItemTypes =
-    | "artist"
-    | "album"
-    | "playlist"
-    | "track"
-    | "show"
-    | "episode"
-    | "audiobook";
+export type ItemTypes = "artist" | "album" | "playlist" | "track" | "show" | "episode" | "audiobook";
 export type Market =
     | "AD"
     | "AE"
@@ -508,7 +487,7 @@ export type QueryAdditionalTypes = ["episode"];
 export type TrackItem = Track | Episode;
 
 type AlbumBase = {
-    album_type: string;
+    album_type: "album" | "single" | "compilation";
     available_markets: string[];
     copyrights: Copyright[];
     external_ids: ExternalIds;
@@ -524,7 +503,7 @@ type AlbumBase = {
     release_date_precision: string;
     restrictions?: Restrictions;
     total_tracks: number;
-    type: string;
+    type: "album";
     uri: string;
 };
 
@@ -605,7 +584,7 @@ export type SimplifiedTrack = {
     preview_url: string | null;
     track: boolean;
     track_number: number;
-    type: string;
+    type: "track";
     uri: string;
     is_playable?: boolean;
     linked_from?: LinkedFrom;
@@ -638,7 +617,7 @@ export type SimplifiedArtist = {
     href: string;
     id: string;
     name: string;
-    type: string;
+    type: "artist";
     uri: string;
 };
 
@@ -687,9 +666,7 @@ type SearchResultsMap = {
 };
 
 export type PartialSearchResult = {
-    [K in ItemTypes as ResourceTypeToResultKey[K]]?: Page<
-        K extends keyof SearchResultsMap ? SearchResultsMap[K] : any
-    >;
+    [K in ItemTypes as ResourceTypeToResultKey[K]]?: Page<K extends keyof SearchResultsMap ? SearchResultsMap[K] : any>;
 };
 
 /**
