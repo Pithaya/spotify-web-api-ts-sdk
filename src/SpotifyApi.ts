@@ -11,7 +11,7 @@ import PlaylistsEndpoints from "./endpoints/PlaylistsEndpoints.js";
 import SearchEndpoints from "./endpoints/SearchEndpoints.js";
 import ShowsEndpoints from "./endpoints/ShowsEndpoints.js";
 import TracksEndpoints from "./endpoints/TracksEndpoints.js";
-import type { IAuthStrategy } from "./auth/IAuthStrategy.js";
+import EmptyAuthStrategy from "./auth/EmptyAuthStrategy.js";
 import UsersEndpoints from "./endpoints/UsersEndpoints.js";
 import CurrentUserEndpoints from "./endpoints/CurrentUserEndpoints.js";
 import DefaultResponseDeserializer from "./serialization/DefaultResponseDeserializer.js";
@@ -22,8 +22,6 @@ import type { SdkConfiguration, SdkOptions } from "./types.js";
 export class SpotifyApi {
     private readonly sdkConfig: SdkConfiguration;
     private static readonly rootUrl: string = "https://api.spotify.com/v1/";
-
-    private readonly authenticationStrategy: IAuthStrategy;
 
     public albums: AlbumsEndpoints;
     public artists: ArtistsEndpoints;
@@ -42,7 +40,7 @@ export class SpotifyApi {
 
     public currentUser: CurrentUserEndpoints;
 
-    public constructor(authentication: IAuthStrategy, config?: SdkOptions) {
+    public constructor(config?: SdkOptions) {
         this.sdkConfig = this.initializeSdk(config);
 
         this.albums = new AlbumsEndpoints(this);
@@ -60,8 +58,6 @@ export class SpotifyApi {
         this.users = new UsersEndpoints(this);
         this.currentUser = new CurrentUserEndpoints(this);
         this.search = new SearchEndpoints(this);
-
-        this.authenticationStrategy = authentication;
     }
 
     public async makeRequest<TReturnType>(
@@ -71,8 +67,7 @@ export class SpotifyApi {
         contentType: string | undefined = undefined
     ): Promise<TReturnType | null> {
         try {
-            const accessToken =
-                await this.authenticationStrategy.getAccessToken();
+            const accessToken = await this.sdkConfig.authentication.getAccessToken();
 
             if (accessToken === null) {
                 console.warn("No access token found.");
@@ -81,17 +76,18 @@ export class SpotifyApi {
 
             const fullUrl = SpotifyApi.rootUrl + url;
 
+            const headers: HeadersInit = {
+                "Content-Type": contentType ?? "application/json"
+            };
+
+            if (accessToken !== "") {
+                headers.Authorization = `Bearer ${accessToken}`;
+            }
+
             const opts: RequestInit = {
                 method,
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": contentType ?? "application/json"
-                },
-                body: body
-                    ? typeof body === "string"
-                        ? body
-                        : JSON.stringify(body)
-                    : undefined
+                headers,
+                body: body ? (typeof body === "string" ? body : JSON.stringify(body)) : undefined
             };
 
             this.sdkConfig.beforeRequest(fullUrl, opts);
@@ -103,12 +99,9 @@ export class SpotifyApi {
             }
 
             await this.sdkConfig.responseValidator.validateResponse(result);
-            return await this.sdkConfig.deserializer.deserialize<TReturnType>(
-                result
-            );
+            return await this.sdkConfig.deserializer.deserialize<TReturnType>(result);
         } catch (error) {
-            const handled =
-                await this.sdkConfig.errorHandler.handleErrors(error);
+            const handled = await this.sdkConfig.errorHandler.handleErrors(error);
             if (!handled) {
                 throw error;
             }
@@ -118,28 +111,15 @@ export class SpotifyApi {
 
     private initializeSdk(config: SdkOptions | undefined): SdkConfiguration {
         const defaultConfig: SdkConfiguration = {
-            fetch: async (
-                req: RequestInfo | URL,
-                init: RequestInit | undefined
-            ) => await fetch(req, init),
+            fetch: async (url: string, init: RequestInit) => await fetch(url, init),
             beforeRequest: (url: string, options: RequestInit) => {},
-            afterRequest: (
-                url: string,
-                options: RequestInit,
-                reponse: Response
-            ) => {},
+            afterRequest: (url: string, options: RequestInit, reponse: Response | any) => {},
             deserializer: new DefaultResponseDeserializer(),
             responseValidator: new DefaultResponseValidator(),
-            errorHandler: new NoOpErrorHandler()
+            errorHandler: new NoOpErrorHandler(),
+            authentication: new EmptyAuthStrategy()
         };
 
         return { ...defaultConfig, ...config };
-    }
-
-    /**
-     * @returns the current access token. null implies the SpotifyApi is not yet authenticated.
-     */
-    public async getAccessToken(): Promise<string | null> {
-        return await this.authenticationStrategy.getAccessToken();
     }
 }

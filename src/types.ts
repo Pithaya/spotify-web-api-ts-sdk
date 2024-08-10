@@ -1,23 +1,25 @@
 // Configuration types
 
-export type RequestImplementation = (input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>;
+export type RequestImplementation = (url: string, init: RequestInit) => Promise<Response | any>;
 
 export type SdkOptions = {
     fetch?: RequestImplementation;
     beforeRequest?: (url: string, options: RequestInit) => void;
-    afterRequest?: (url: string, options: RequestInit, response: Response) => void;
+    afterRequest?: (url: string, options: RequestInit, response: Response | any) => void;
     deserializer?: IResponseDeserializer;
     responseValidator?: IValidateResponses;
     errorHandler?: IHandleErrors;
+    authentication?: IAuthStrategy;
 };
 
 export type SdkConfiguration = SdkOptions & {
     fetch: RequestImplementation;
     beforeRequest: (url: string, options: RequestInit) => void;
-    afterRequest: (url: string, options: RequestInit, response: Response) => void;
+    afterRequest: (url: string, options: RequestInit, response: Response | any) => void;
     deserializer: IResponseDeserializer;
     responseValidator: IValidateResponses;
     errorHandler: IHandleErrors;
+    authentication: IAuthStrategy;
 };
 
 export interface IHandleErrors {
@@ -25,11 +27,15 @@ export interface IHandleErrors {
 }
 
 export interface IValidateResponses {
-    validateResponse: (response: Response) => Promise<void>;
+    validateResponse: (response: Response | any) => Promise<void>;
 }
 
 export interface IResponseDeserializer {
-    deserialize: <TReturnType>(response: Response) => Promise<TReturnType>;
+    deserialize: <TReturnType>(response: Response | any) => Promise<TReturnType>;
+}
+
+export interface IAuthStrategy {
+    getAccessToken: () => Promise<string | null>;
 }
 
 // API return types
